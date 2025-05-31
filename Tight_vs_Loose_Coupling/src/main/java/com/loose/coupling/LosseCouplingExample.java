@@ -1,5 +1,8 @@
 package com.loose.coupling;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 public class LosseCouplingExample {
 
     public static void main(String[] args) {
@@ -10,13 +13,12 @@ public class LosseCouplingExample {
            on the user manager.  Simple example, can also be accomplished with Abstract class instead
            of interface.
         */
+        ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
 
-        UserDataProvider up = new UserDatabaseProvider();
-        UserManager um = new UserManager(up);
-        System.out.println(um.getUserInfo());
+        UserManager userManager = (UserManager) context.getBean("userManager");
+        System.out.println(userManager.getUserInfo());
 
-        UserDataProvider wb = new WebUserDataProvider();
-        UserManager umw = new UserManager(wb);
-        System.out.println(umw.getUserInfo());
+        UserManager webUserManager = (UserManager) context.getBean("webUserManager");
+        System.out.println(webUserManager.getUserInfo());
     }
 }
