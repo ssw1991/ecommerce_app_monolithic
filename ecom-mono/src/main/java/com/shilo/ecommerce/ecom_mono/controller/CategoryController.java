@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -18,17 +19,21 @@ public class CategoryController {
     private CategoryServiceI categoryService;
 
     @GetMapping("/public/categories")
-    public List<Category> getAllCategories(){
-        return categoryService.getAllCategories();
+    public ResponseEntity<List<Category>> getAllCategories(){
+        return new ResponseEntity<>(categoryService.getAllCategories(), HttpStatus.OK);
     }
 
     @PostMapping("/public/categories")
-    public String createCategory(@RequestBody Category category){
-        categoryService.createCategory(category);
-        return "Category added successfully";
+    public ResponseEntity<String> createCategory(@RequestBody Category category){
+        try {
+            categoryService.createCategory(category);
+            return new ResponseEntity<>("Category added successfully", HttpStatus.OK);
+        } catch(ResponseStatusException e) {
+            return new ResponseEntity<>(e.getMessage(), e.getStatusCode());
+        }
     }
 
-    @DeleteMapping("/admin/categories/{categoryId")
+    @DeleteMapping("/admin/categories/{categoryId}")
     public ResponseEntity<String> deleteCategory(@PathVariable Integer categoryId){
         String status = categoryService.deleteCategory(categoryId);
         try{
@@ -39,4 +44,13 @@ public class CategoryController {
         }
     }
 
+    @PutMapping("/public/categories/{categoryId}")
+    public ResponseEntity<String> updateCategory(@RequestBody Category category, @PathVariable Integer categoryId){
+        try {
+            Category updatedCategory = categoryService.updateCategory(category, categoryId);
+            return new ResponseEntity<>(updatedCategory.toString(), HttpStatus.OK);
+        } catch (ResponseStatusException e){
+            return new ResponseEntity<>(e.getReason(), e.getStatusCode());
+        }
+    }
 }
