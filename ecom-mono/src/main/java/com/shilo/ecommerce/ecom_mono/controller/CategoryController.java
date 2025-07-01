@@ -2,6 +2,7 @@ package com.shilo.ecommerce.ecom_mono.controller;
 
 import com.shilo.ecommerce.ecom_mono.model.Category;
 import com.shilo.ecommerce.ecom_mono.service.CategoryServiceI;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public class CategoryController {
     }
 
     @PostMapping("/public/categories")
-    public ResponseEntity<String> createCategory(@RequestBody Category category){
+    public ResponseEntity<String> createCategory(@Valid @RequestBody Category category){
         try {
             categoryService.createCategory(category);
             return new ResponseEntity<>("Category added successfully", HttpStatus.OK);
