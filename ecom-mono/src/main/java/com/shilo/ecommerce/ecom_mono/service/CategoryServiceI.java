@@ -1,16 +1,16 @@
 package com.shilo.ecommerce.ecom_mono.service;
 
+import com.shilo.ecommerce.ecom_mono.dto.CategoryDTO;
 import com.shilo.ecommerce.ecom_mono.model.Category;
+import com.shilo.ecommerce.ecom_mono.response.CategoryResponse;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public interface CategoryServiceI {
 
-    List<Category> getAllCategories();
-    void createCategory(Category category);
+    CategoryResponse getAllCategories();
+    CategoryDTO createCategory(CategoryDTO categoryDTO);
 
-    String deleteCategory(Integer categoryId);
-    Category updateCategory(Category category, Integer categoryId);
+    CategoryDTO deleteCategory(Integer categoryId);
+    CategoryDTO updateCategory(CategoryDTO categoryDTO, Integer categoryId);
 }
