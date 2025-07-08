@@ -8,6 +8,9 @@ import com.shilo.ecommerce.ecom_mono.repo.CategoryRepo;
 import com.shilo.ecommerce.ecom_mono.response.CategoryResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -22,12 +25,22 @@ public class CategoryServiceImpl implements CategoryServiceI {
     private ModelMapper modelMapper;
 
     @Override
-    public CategoryResponse getAllCategories() {
-        List<Category> categories = repo.findAll();
-        CategoryResponse categoryResponse = new CategoryResponse();
+    public CategoryResponse getAllCategories(Integer pageNum, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNum, pageSize);
+        Page page = repo.findAll(pageable);
+        List<Category> categories = page.getContent();
+
+
         List<CategoryDTO> categoryDTOS = categories.stream()
                 .map(category -> modelMapper.map(category, CategoryDTO.class))
                 .toList();
+        CategoryResponse categoryResponse = new CategoryResponse(categoryDTOS,
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.isLast()
+        );
         categoryResponse.setContent(categoryDTOS);
         return categoryResponse;
     }

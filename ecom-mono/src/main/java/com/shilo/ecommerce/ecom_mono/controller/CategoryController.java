@@ -22,8 +22,9 @@ public class CategoryController {
     private CategoryServiceI categoryService;
 
     @GetMapping("/public/categories")
-    public ResponseEntity<CategoryResponse> getAllCategories(){
-        return new ResponseEntity<>(categoryService.getAllCategories(), HttpStatus.OK);
+    public ResponseEntity<CategoryResponse> getAllCategories(@RequestParam(name = "pageNum") Integer pageNum,
+                                                             @RequestParam(name = "pageSize") Integer pageSize) {
+        return new ResponseEntity<>(categoryService.getAllCategories(pageNum, pageSize), HttpStatus.OK);
     }
 
     @PostMapping("/public/categories")
@@ -44,4 +45,6 @@ public class CategoryController {
                                                       @PathVariable Integer categoryId){
         CategoryDTO savedCategoryDTO = categoryService.updateCategory(categoryDTO, categoryId);
         return new ResponseEntity<>(savedCategoryDTO, HttpStatus.OK);
+    }
 }
+
