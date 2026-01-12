@@ -4,11 +4,14 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity(name = "products")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name="prodcuts")
+@ToString
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -21,7 +24,11 @@ public class Product {
     private double specialPrice;
     private String image;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "category_id")
     private Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "seller_id")
+    private User user;
 }

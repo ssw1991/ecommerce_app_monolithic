@@ -1,6 +1,7 @@
 package com.shilo.ecommerce.ecom_mono.service;
 
 import com.shilo.ecommerce.ecom_mono.dto.ProductDTO;
+import com.shilo.ecommerce.ecom_mono.exceptions.APIException;
 import com.shilo.ecommerce.ecom_mono.exceptions.ResourceNotFoundException;
 import com.shilo.ecommerce.ecom_mono.model.Category;
 import com.shilo.ecommerce.ecom_mono.model.Product;
@@ -43,12 +44,26 @@ public class ProductServiceImpl implements ProductService{
         Product product = modelMapper.map(productDTO, Product.class);
         Category category = categoryRepo.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category","categoryId",categoryId));
-        product.setImage("default.png");
-        product.setCategory(category);
-        double specialPrice = product.getPrice()*(1 -product.getDiscount()*.01);
-        product.setSpecialPrice(specialPrice);
-        Product savedProduct = productRepo.save(product);
-        return modelMapper.map(savedProduct, ProductDTO.class);
+
+        boolean isProductNotPresent = true;
+        List<Product> products = category.getProducts();
+        for (Product value : products) {
+            if (value.getProductName().equals(productDTO.getProductName())) {
+                isProductNotPresent = false;
+                break;
+            }
+        }
+
+        if(isProductNotPresent) {
+            product.setImage("default.png");
+            product.setCategory(category);
+            double specialPrice = product.getPrice() * (1 - product.getDiscount() * .01);
+            product.setSpecialPrice(specialPrice);
+            Product savedProduct = productRepo.save(product);
+            return modelMapper.map(savedProduct, ProductDTO.class);
+        } else {
+            throw new APIException("Product already exists");
+        }
     }
 
     @Override
@@ -133,7 +148,7 @@ public class ProductServiceImpl implements ProductService{
                 .orElseThrow(() -> new ResourceNotFoundException("Product","productId",productId));
 
         Product product = modelMapper.map(productDTO, Product.class);
-        product.setProductId(productId);
+        savedProduct.setProductId(productId);
         savedProduct = productRepo.save(product);
         return modelMapper.map(savedProduct, ProductDTO.class);
     }
