@@ -4,7 +4,7 @@ import com.shilo.ecommerce.ecom_mono.model.AppRole;
 import com.shilo.ecommerce.ecom_mono.model.Role;
 import com.shilo.ecommerce.ecom_mono.model.User;
 import com.shilo.ecommerce.ecom_mono.repo.RoleRepo;
-import com.shilo.ecommerce.ecom_mono.repo.UserRepository;
+import com.shilo.ecommerce.ecom_mono.repo.UserRepo;
 import com.shilo.ecommerce.ecom_mono.security.jwt.JwtUtils;
 import com.shilo.ecommerce.ecom_mono.security.request.LoginRequest;
 import com.shilo.ecommerce.ecom_mono.security.request.SignupRequest;
@@ -39,7 +39,7 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    UserRepository userRepository;
+    UserRepo userRepo;
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -64,26 +64,26 @@ public class AuthController {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        //String jwtToken = jwtUtils.generateTokenFromUsername(userDetails.getUsername());
+        String jwtToken = jwtUtils.generateTokenFromUsername(userDetails.getUsername());
         ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
 
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
 
-        UserInfoResponse response = new UserInfoResponse(userDetails.getId(), userDetails.getUsername(), roles);
+        UserInfoResponse response = new UserInfoResponse(userDetails.getId(), userDetails.getUsername(), roles, jwtToken, jwtCookie.toString());
 
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(response);
     }
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signupRequest){
-        if(userRepository.existsByUserName(signupRequest.getUsername())){
+        if(userRepo.existsByUserName(signupRequest.getUsername())){
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Username is already in use"));
         }
-        if(userRepository.existsByEmail(signupRequest.getEmail())){
+        if(userRepo.existsByEmail(signupRequest.getEmail())){
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Email is already in use"));
@@ -122,7 +122,7 @@ public class AuthController {
 
         }
         user.setRoles(roles);
-        userRepository.save(user);
+        userRepo.save(user);
         return ResponseEntity.ok(new MessageResponse("User registered successfully"));
     };
 

@@ -6,6 +6,7 @@ public class UserInfoResponse {
 
     private Integer id;
     private String jwtToken;
+    private String jwtCookie;
     private String username;
     private List<String> roles;
 
@@ -20,6 +21,14 @@ public class UserInfoResponse {
         this.id = id;
         this.username = username;
         this.roles = roles;
+    }
+
+    public UserInfoResponse(Integer id, String username, List<String> roles, String jwtToken, String jwtCookie) {
+        this.id = id;
+        this.username = username;
+        this.roles = roles;
+        this.jwtToken = jwtToken;
+        this.jwtCookie = jwtCookie;
     }
 
     public Integer getId() {
@@ -52,6 +61,14 @@ public class UserInfoResponse {
 
     public void setRoles(List<String> roles) {
         this.roles = roles;
+    }
+
+    public String getJwtCookie() {
+        return jwtCookie;
+    }
+
+    public void setJwtCookie(String jwtCookie) {
+        this.jwtCookie = jwtCookie;
     }
 }
 

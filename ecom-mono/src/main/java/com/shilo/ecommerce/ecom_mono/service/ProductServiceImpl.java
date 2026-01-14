@@ -1,10 +1,13 @@
 package com.shilo.ecommerce.ecom_mono.service;
 
+import com.shilo.ecommerce.ecom_mono.dto.CartDTO;
 import com.shilo.ecommerce.ecom_mono.dto.ProductDTO;
 import com.shilo.ecommerce.ecom_mono.exceptions.APIException;
 import com.shilo.ecommerce.ecom_mono.exceptions.ResourceNotFoundException;
+import com.shilo.ecommerce.ecom_mono.model.Cart;
 import com.shilo.ecommerce.ecom_mono.model.Category;
 import com.shilo.ecommerce.ecom_mono.model.Product;
+import com.shilo.ecommerce.ecom_mono.repo.CartRepo;
 import com.shilo.ecommerce.ecom_mono.repo.CategoryRepo;
 import com.shilo.ecommerce.ecom_mono.repo.ProductRepo;
 import com.shilo.ecommerce.ecom_mono.response.ProductResponse;
@@ -20,10 +23,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService{
 
+    @Autowired
+    private CartRepo cartRepository;
+    @Autowired
+    private CartService cartService;
     @Autowired
     private CategoryRepo categoryRepo;
     @Autowired
@@ -150,6 +158,22 @@ public class ProductServiceImpl implements ProductService{
         Product product = modelMapper.map(productDTO, Product.class);
         savedProduct.setProductId(productId);
         savedProduct = productRepo.save(product);
+
+        List<Cart> carts = cartRepository.findCartsByProductId(productId);
+
+        List<CartDTO> cartDTOs = carts.stream().map(cart -> {
+            CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
+
+            List<ProductDTO> products = cart.getCartItems().stream()
+                    .map(p -> modelMapper.map(p.getProduct(), ProductDTO.class)).collect(Collectors.toList());
+
+            cartDTO.setProducts(products);
+
+            return cartDTO;
+
+        }).collect(Collectors.toList());
+
+        cartDTOs.forEach(cart -> cartService.updateProductInCarts(cart.getCartId(), productId));
         return modelMapper.map(savedProduct, ProductDTO.class);
     }
 

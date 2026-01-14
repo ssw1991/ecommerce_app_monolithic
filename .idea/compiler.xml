@@ -8,9 +8,10 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="ecom-mono" />
+        <module name="SpringExample" />
+        <module name="SpringSecurity" />
         <module name="SpringBoot" />
         <module name="Tight_vs_Loose_Coupling (1)" />
-        <module name="SpringExample" />
         <module name="demo" />
         <module name="Tight_vs_Loose_Coupling" />
       </profile>
@@ -19,6 +20,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="SpringBoot" options="-parameters" />
+      <module name="SpringSecurity" options="-parameters" />
       <module name="demo" options="-parameters" />
       <module name="ecom-mono" options="-parameters" />
     </option>

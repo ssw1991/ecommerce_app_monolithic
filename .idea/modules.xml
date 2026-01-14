@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/ecom-mono/ecom-mono.iml" filepath="$PROJECT_DIR$/ecom-mono/ecom-mono.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/ecommerce_app_monolithic.iml" filepath="$PROJECT_DIR$/.idea/ecommerce_app_monolithic.iml" />
     </modules>
   </component>
